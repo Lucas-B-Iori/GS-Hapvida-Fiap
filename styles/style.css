@@ -70,6 +70,119 @@
 
 }
 
+/* FORMULÁRIO - STYLES */
+
+.texto-contato {
+    text-align: center;
+    margin: 50px auto;
+    font-size: 30px;
+}
+
+.formulario {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 400px;
+    margin: 50px auto;
+    gap: 30px;
+    padding: 30px;
+    border: 1px solid #000;
+    border-radius: 15px;
+}
+
+.formulario__input {
+    border: none;
+    padding: 12px;
+    background-color: #b3dcfd;
+    border-radius: 5px;
+    color: #000;
+    outline: none;
+}
+
+.formulario__input::placeholder {
+    color: #3f3c3c;
+}
+
+.formulario__caixa {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.formulario__caixa button {
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    width: 120px;
+    cursor: pointer;
+    transition: 0.4s;
+    font-size: 16px;
+}
+
+.enviar {
+    background-color: rgb(227, 125, 84);
+}
+
+.enviar:hover {
+    background-color: rgb(202, 95, 53);
+    transform: scale(1.05);
+}
+
+.limpar {
+    background-color: rgb(92, 98, 203);
+}
+
+.limpar:hover {
+    background-color: rgb(53, 60, 202);
+    transform: scale(1.05);
+}
+
+.certo, .erro {
+    position: fixed;
+    top: 40px;
+    left: 0;
+    padding: 23px 0 0 2px;
+    width: 23vw;
+    font-size: 18px;
+}
+
+.certo {
+    background-color: #40ca70;
+}
+
+
+.certo::after {
+    content: '';
+    background-color: #00ff59;
+    animation: animate-width 3s ease-out;
+    display: block;
+    height: 8px;
+    margin-top: 5px;
+    padding: 0;
+}
+
+.erro {
+    background-color: #c23c32;
+}
+
+.erro::after {
+    content: '';
+    background-color: #f71000;
+    animation: animate-width 3s ease-out;
+    display: block;
+    height: 8px;
+    margin-top: 5px;
+    padding: 0;
+}
+
+@keyframes animate-width {
+    from{
+        width: 0%;
+    }
+    to{
+        width: 100%;
+    } 
+}
 
 /* FOOTER - STYLES */
 
