@@ -1,3 +1,5 @@
+import json
+
 # A função valida_respostas verifica se um input digitado pelo usuario esta dentre as possíveis opçoes válidas
 def valida_resposta(msg, lista):
     resposta = input(msg).lower()
@@ -27,7 +29,7 @@ def calcula_imc(altura, peso):
 # pode ser usada tanto pra medicos quanto pra paciente
 def verifica_cadastro_usuario(lista, nome_usuario):
     for el in lista:
-        if el[0].lower() == nome_usuario.lower():
+        if el["nome"].lower() == nome_usuario.lower():
             return True
     return False
 
@@ -41,7 +43,14 @@ def cria_paciente(lista):
     sexo = valida_resposta("Digite qual o sexo do paciente: ", ['feminino', 'masculino'])
     imc = calcula_imc(altura, peso)
     consulta = 'Nenhuma'
-    paciente = [nome, altura, peso, sexo, imc, consulta]
+    paciente = {
+        "nome": nome,
+        "altura": altura,
+        "peso": peso,
+        "sexo": sexo,
+        "imc": imc,
+        "consulta": consulta
+    }
     lista.append(paciente)
 
 
@@ -50,7 +59,10 @@ def cria_paciente(lista):
 def cria_medico(lista):
     nome = input("Digite o nome completo do medico: ")
     especialidade = input("Digite a sua especialização: ")
-    medico = [nome, especialidade]
+    medico = {
+        "nome": nome,
+        "especializacao": especialidade
+    }
     lista.append(medico)
 
 
@@ -59,7 +71,7 @@ def cria_medico(lista):
 def valida_usuario_escolhido(lista, msg):
     nomes = []
     for i in range(len(lista)):
-        nomes.append((lista[i][0].lower()))
+        nomes.append((lista[i]["nome"].lower()))
     usuario_escolhido = valida_resposta(f"{msg}, \n{nomes}", nomes)
     return usuario_escolhido
 
@@ -68,13 +80,13 @@ def valida_usuario_escolhido(lista, msg):
 # até achar o paciente escolhido e printa todas as suas informações
 def mostra_infos_paciente(lista, paciente_escolhido):
     for paciente in lista:
-        if paciente[0].lower() == paciente_escolhido.lower():
-            print(f"Nome Completo: {paciente[0]}")
-            print(f"Altura(cm): {paciente[1]}")
-            print(f"Peso(kg): {paciente[2]}")
-            print(f"Sexo: {paciente[3]}")
-            print(f"IMC: {paciente[4]}")
-            print(f"Consulta: {paciente[5]}")
+        if paciente['nome'].lower() == paciente_escolhido.lower():
+            print(f"Nome Completo: {paciente['nome']}")
+            print(f"Altura(cm): {paciente['altura']}")
+            print(f"Peso(kg): {paciente['peso']}")
+            print(f"Sexo: {paciente['sexo']}")
+            print(f"IMC: {paciente['imc']}")
+            print(f"Consulta: {paciente['consulta']}")
             print()
             break
 
@@ -83,19 +95,14 @@ def mostra_infos_paciente(lista, paciente_escolhido):
 # primeiramente ela define melhor qual tipo de dado é esse, depois acha o paciente escolhido na lista
 # e altera o dado em questão
 def altera_dados_paciente(lista, dado_escolhido, paciente_escolhido):
-    if dado_escolhido == 1:
-        dado = "nome completo"
-    elif dado_escolhido == 2:
-        dado = "altura"
-    elif dado_escolhido == 3:
-        dado = "peso"
-    else:
-        dado = "sexo"
     for paciente in lista:
-        if paciente[0].lower() == paciente_escolhido.lower():
+        if paciente["nome"].lower() == paciente_escolhido.lower():
             print(
-                f"{dado.capitalize()} do(a) paciente {paciente_escolhido.capitalize()}: {paciente[dado_escolhido - 1]}")
-            paciente[dado_escolhido - 1] = input("Digite um novo valor para esse dado: ")
+                f"{dado_escolhido.capitalize()} do(a) paciente {paciente_escolhido.capitalize()}: {paciente[dado_escolhido]}")
+            if dado_escolhido == 'altura' or dado_escolhido == 'peso':
+                paciente[dado_escolhido] = transforma_em_numero("Digite um novo valor para esse dado: ")
+            else:
+                paciente[dado_escolhido] = input("Digite um novo valor para esse dado: ")
             break
 
 
@@ -119,14 +126,14 @@ def valida_data():
 # percorre a lista passada para mudar a informação sobre consulta no paciente determinado
 def marca_consulta(paciente, lista):
     print("Médicos da casa: ")
-    for medico in lista_medicos:
-        print(f'{medico[0]} - {medico[1]}')
-    medico_escolhido = valida_usuario_escolhido(lista_medicos, 'Qual médico você vai querer marcar uma consulta? ')
+    for medico in lista_medico:
+        print(f'{medico["nome"]} - {medico["especializacao"]}')
+    medico_escolhido = valida_usuario_escolhido(lista_medico, 'Qual médico você vai querer marcar uma consulta? ')
     data = valida_data()
     for el in lista:
-        if el[0].lower() == paciente.lower():
-            el[5] = f"{medico_escolhido} - {data}"
-            print(f"Consulta Marcada: {el[5]}")
+        if el["nome"].lower() == paciente.lower():
+            el["consulta"] = f"{medico_escolhido} - {data}"
+            print(f"Consulta Marcada: {el['consulta']}")
             break
 
 
@@ -136,29 +143,22 @@ usuario = valida_resposta("Qual a sua função? medico ou paciente? ", opcoes_us
 
 # Lista de Pacientes guarda todas as informações sobre eles, na ordem: Nome Completo,
 # altura(cm), peso(kg), sexo, IMC, consulta
-lista_pacientes = [
-    ['Ana Silva', 165, 60, 'feminino', 22.04, 'Nenhuma'],
-    ['Felipe Oliveira', 178, 75, 'masculino', 23.67, 'Nenhuma'],
-    ['Marina Santos', 170, 68, 'feminino', 23.53, 'Nenhuma'],
-    ['Rafael Lima', 175, 80, 'masculino', 26.12, 'Nenhuma'],
-    ['Carolina Costa', 160, 55, 'feminino', 21.48, 'Nenhuma']
-]
+with open("lista_paciente.json", mode='r', encoding="UTF-8") as arquivo:
+    conteudo = arquivo.read()
+
+lista_paciente = json.loads(conteudo)
 
 # Lista de Medicos guarda o nome completo e a especialização de cada um
-lista_medicos = [
-    ['Carolina Pereira', 'Cardiologia'],
-    ['Ricardo Almeida', 'Ortopedia'],
-    ['Camila Costa', 'Ginecologia e Obstetrícia'],
-    ['Gustavo Santos', 'Pediatria'],
-    ['Mariana Oliveira', 'Neurologia']
-]
+with open("lista_medico.json", mode='r', encoding="UTF-8") as arquivo:
+    conteudo = arquivo.read()
+lista_medico = json.loads(conteudo)
 
 if usuario == 'medico':
     nome_medico = input("Digite o seu nome completo: ")
     # Verifica se o medico ja esta cadastrado
-    if not verifica_cadastro_usuario(lista_medicos, nome_medico):
+    if not verifica_cadastro_usuario(lista_medico, nome_medico):
         print("Hm, você ainda não está cadastrado(a) no nosso sistema, vamos resolver isso!")
-        cria_medico(lista_medicos)
+        cria_medico(lista_medico)
 
     # Uma vez que o medico ja esta cadastrado, o menu de opção é mostrado para que ele acesse e escolha uma opção
     print("Você ja esta cadastrado no sistema!")
@@ -171,39 +171,41 @@ if usuario == 'medico':
                                           "\nDigite 4 para sair\n", opcoes_validas_medico)
         # Opção 1 é utilizada para cadastrar um novo paciente no sistema
         if opcao_escolhida == '1':
-            cria_paciente(lista_pacientes)
+            cria_paciente(lista_paciente)
         # Opção 2 é utilizada para mostrar as informações de um paciente
         elif opcao_escolhida == '2':
-            paciente_escolhido = valida_usuario_escolhido(lista_pacientes, "Qual paciente você vai querer ver as "
+            paciente_escolhido = valida_usuario_escolhido(lista_paciente, "Qual paciente você vai querer ver as "
                                                                            "informações?")
-            mostra_infos_paciente(lista_pacientes, paciente_escolhido)
+            mostra_infos_paciente(lista_paciente, paciente_escolhido)
         # Opção 3 é utilizada para alterar alguma informação de um paciente específico
         elif opcao_escolhida == '3':
-            paciente_escolhido = valida_usuario_escolhido(lista_pacientes, 'Qual paciente você vai querer ver as '
+            paciente_escolhido = valida_usuario_escolhido(lista_paciente, 'Qual paciente você vai querer ver as '
                                                                            'informações?')
             while True:
-                dados_valido_para_escolha = ['1', '2', '3', '4', '5']
+                dados_valido_para_escolha = ['nome', 'altura', 'peso', 'sexo', 'sair']
                 dado_escolhido = valida_resposta(f"\nSelecione o dado do(a) paciente {paciente_escolhido.capitalize()}"
                                                  f" que deseja alterar:"
-                                                 "\nDigite 1 para nome completo"
-                                                 "\nDigite 2 para altura"
-                                                 "\nDigite 3 para peso"
-                                                 "\nDigite 4 para sexo"
-                                                 "\nDigite 5 para sair\n", dados_valido_para_escolha)
-                dado_escolhido = int(dado_escolhido)
-                if dado_escolhido == 5:
+                                                 "\nNome, Altura, Peso ou Sexo"
+                                                 "\nDigite sair para sair\n", dados_valido_para_escolha)
+                if dado_escolhido.lower() == 'sair':
                     break
-                altera_dados_paciente(lista_pacientes, dado_escolhido, paciente_escolhido)
+                altera_dados_paciente(lista_paciente, dado_escolhido, paciente_escolhido)
         # Opcão 4 é usada para sair do programa
         else:
+            with open("lista_medico.json", mode="w", encoding="UTF-8") as arquivo:
+                conteudo = json.dumps(lista_medico, ensure_ascii=False, indent=4)
+                arquivo.write(conteudo)
+            with open("lista_paciente.json", mode="w", encoding="UTF-8") as arquivo:
+                conteudo = json.dumps(lista_paciente, ensure_ascii=False, indent=4)
+                arquivo.write(conteudo)
             break
 else:
     nome_paciente = input("Digite o seu nome: ")
     # Verifica se o paciente ja esta cadastrado
-    if not verifica_cadastro_usuario(lista_pacientes, nome_paciente):
+    if not verifica_cadastro_usuario(lista_paciente, nome_paciente):
         print("Hm, você ainda não está cadastrado(a) no nosso sistema, vamos resolver isso!")
-        cria_paciente(lista_pacientes)
-        nome_paciente = lista_pacientes[len(lista_pacientes) - 1][0]
+        cria_paciente(lista_paciente)
+        nome_paciente = lista_paciente[len(lista_paciente) - 1]['nome']
 
     print("Você ja esta cadastrado no sistema!")
     # Uma vez que o paciente ja esta cadastrado, o menu de opção é mostrado para que ele acesse e escolha uma opção
@@ -215,9 +217,12 @@ else:
                                          "Digite 3 para sair\n", opcoes_validas_paciente)
         # Opção 1 é usada para mostrar informações sobre o paciente
         if opcao_desejada == '1':
-            mostra_infos_paciente(lista_pacientes, nome_paciente)
+            mostra_infos_paciente(lista_paciente, nome_paciente)
         # opção 2 é usada para marcar uma consulta com algum médico
         elif opcao_desejada == '2':
-            marca_consulta(nome_paciente, lista_pacientes)
+            marca_consulta(nome_paciente, lista_paciente)
         else:
+            with open("lista_paciente.json", mode="w", encoding="UTF-8") as arquivo:
+                conteudo = json.dumps(lista_paciente, ensure_ascii=False, indent=4)
+                arquivo.write(conteudo)
             break
