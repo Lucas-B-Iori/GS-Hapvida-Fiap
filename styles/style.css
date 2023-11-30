@@ -5,6 +5,23 @@
     text-decoration: none;
 }
 
+* {
+    scrollbar-width: 10px;          
+    scrollbar-color: #c74582 #e980b1;
+}
+
+body::-webkit-scrollbar {
+    width: 6px;
+}
+
+body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #c74582;
+    border-radius: 10px;
+}
 
 /* HEADER - STYLES */
 .header {
@@ -88,6 +105,7 @@
     padding: 30px;
     border: 1px solid #000;
     border-radius: 15px;
+    box-shadow: 4px 4px 20px #000;
 }
 
 .formulario__input {
@@ -183,6 +201,37 @@
         width: 100%;
     } 
 }
+
+.secao-tabela {
+    margin-top: 150px;
+}
+
+.tabela {
+    margin: 60px auto;
+    text-align: center;
+}
+
+.tabela-head {
+    background-color: #FDB3D5;
+}
+
+.tabela-head td {
+    font-size: 21px;
+    font-weight: 700;
+    padding: 5px;
+}
+
+.tabela-body td {
+    width: 300px;
+    padding: 10px;
+    background-color: #ebe1e1;
+}
+
+.tabela-body img {
+    border-radius: 50%;
+    width: 50px;
+}
+
 
 /* FOOTER - STYLES */
 
