@@ -1,5 +1,9 @@
 # GS-Hapvida-Fiap
 ## Computational Thinking with Python
+
+### Lucas Bertolassi Iori - RM553183
+### Beatriz Dantas Sampaio - RM554044
+
 ### Sistema de Hospital em Python
 
 Este é um sistema simples em Python para gerenciamento de pacientes e médicos em um hospital, com ele é possível cadastrar novos médicos e paciente, marcar consultas, verificar e alterar informações sobre os pacientes. Tudo é feito através de um menu de opções, no qual é necessário ir selecionando uma opção válida e poderá avançar na aplicação.
