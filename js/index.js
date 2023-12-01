@@ -48,7 +48,7 @@ function validaFormulario(e) {
         submeteFormulario('O email deve ter o dominio, @ e .com', 'erro')
         return false
     }
-    submeteFormulario('Formulário submetido com sucesso obrigado', 'certo')
+    submeteFormulario('Formulário submetido com sucesso, obrigado', 'certo')
     limpaCampos()
     return true
 }
